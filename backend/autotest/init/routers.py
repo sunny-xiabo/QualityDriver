@@ -7,14 +7,14 @@
 
 from fastapi import FastAPI
 from config import config
-from autotest.apis import api_router
+from autotest.apis import app_router
 
 
-def init_routers(app: FastAPI):
+def init_router(app: FastAPI):
     """
     初始化路由
     :param app:
     :return:
     """
 
-    app.include_router(api_router, prefix=config.API_PREFIX)
+    app.include_router(app_router, prefix=config.API_PREFIX)

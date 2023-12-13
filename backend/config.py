@@ -7,7 +7,7 @@
 import os.path
 import typing
 
-from pydantic import BaseSettings, AnyHttpUrl
+from pydantic import BaseSettings, AnyHttpUrl, Field
 
 project_logo = """
    ███████                       ██ ██   ██            ███████          ██                        
@@ -39,9 +39,14 @@ class Configs(BaseSettings):
     API_PREFIX: str = "/api"  # 接口前缀
     GLOBAL_ENCODING: str = "utf-8"  # 全局编码
 
+
+    # 数据库配置
+    DATABASE_URI: str = Field(..., env="MYSQL_DATABASE_URI")
+    DATABASE_ECHO: bool = False  # 是否打印数据库日志 (可看到创建表、表数据增删改查的信息)
+
     class Config:
         case_sensitive = True  # 区分大小写
-        env_file = ".env"  # 指定环境变量文件的路径
+        env_file = ".env.example"  # 指定环境变量文件的路径
         env_file_encoding = "utf-8"  # 指定环境变量文件的编码
 
 

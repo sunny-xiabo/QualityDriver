@@ -47,7 +47,7 @@ class Local:
         try:
             return values[name]
         except KeyError:
-            raise AttributeError(name)
+            return None
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
         """

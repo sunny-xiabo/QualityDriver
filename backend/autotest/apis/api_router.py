@@ -7,4 +7,10 @@
 
 from fastapi import APIRouter
 
+
+from autotest.apis.system import user
+
 app_router = APIRouter()
+
+# system
+app_router.include_router(user.router, prefix="/user", tags=['user'])

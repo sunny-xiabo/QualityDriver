@@ -11,15 +11,18 @@ from math import ceil
 from sqlalchemy import BigInteger, DateTime, func, Boolean, String, select, Executable, Result, ClauseList, Select, \
     insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql.functions import current_user
 
+from autotest.db.session import provide_async_session
 from autotest.exceptions.exceptions import AccessTokenFail
 from autotest.utils.consts import DEFAULT_PAGE, DEFAULT_PER_PAGE
 from autotest.utils.local import g
 from autotest.utils.serialize import unwrap_scalars, count_query, paginate_query
 
 
+@as_declarative()
 class Base:
     """
     基础表
@@ -32,8 +35,8 @@ class Base:
     __mapper_args__ = {
         'eager_defaults': True}  # 防止 insert 时不刷新
 
-    id = mapped_column(BigInteger, nullable=False, primary_key=True, autoincrement=True, comment="主键")
-    creation_date = mapped_column(DateTime(), nullable=False, comment="创建时间")
+    id = mapped_column(BigInteger(), nullable=False, primary_key=True, autoincrement=True, comment="主键")
+    creation_date = mapped_column(DateTime(), default=func.now(), comment="创建时间")
     created_by = mapped_column(BigInteger, comment='创建人ID')
     updating_date = mapped_column(DateTime(), default=func.now(), onupdate=func.now(), comment='更新时间')
     updated_by = mapped_column(BigInteger, comment='更新人ID')
@@ -88,7 +91,52 @@ class Base:
         return params
 
     @classmethod
-    async def delete(cls, id: typing.Union[int, str], _hard: bool= False) -> int:
+    async def create(cls, params: typing.Dict, to_dict: bool = False) -> typing.Union["Base", typing.Dict]:
+        """
+        插入数据
+        :param params: 批量插入数据
+        :param to_dict: 是否转字典
+        :return: 插入数量
+        """
+        if not isinstance(params, dict):
+            raise ValueError("参数错误")
+        params = {key: value for key, value in params.items() if hasattr(cls, key)}
+        params = await cls.handle_params(params)
+        stmt = insert(cls).values(**params)
+        result = await cls.execute(stmt)
+        (primary_key,) = result.inserted_primary_key
+        params["id"] = primary_key
+        return cls(**params) if not to_dict else params
+
+    @classmethod
+    async def batch_create(cls, params: typing.List) -> int:
+        """
+        批量插入数据
+        :param params: 批量插入数据
+        :return: 插入数量
+        """
+        if not isinstance(params, list):
+            raise ValueError("参数错误，参数必须为列表")
+        params = await cls.handle_params(params)
+        stmt = insert(cls).values(params)
+        result = await cls.execute(stmt)
+        return result.rowcount
+
+    @classmethod
+    async def handle_params(cls, params: typing.Any) -> typing.Any:
+        """
+        :param params: 参数列表
+        :return: 过滤好的参数
+        """
+        if isinstance(params, dict):
+            params = cls.filter_params(params)
+            params = await cls.update_params(params)
+        elif isinstance(params, list):
+            params = [await cls.handle_params(p) for p in params]
+        return params
+
+    @classmethod
+    async def delete(cls, id: typing.Union[int, str], _hard: bool = False) -> int:
         """
         删除
         :param id: 删除id
@@ -115,6 +163,7 @@ class Base:
         return await cls.execute_by_session(stmt, params)
 
     @classmethod
+    @provide_async_session
     async def execute_by_session(cls, stmt: Executable, params: typing.Any = None, session: AsyncSession = None) -> \
         Result[typing.Any]:
         """
@@ -147,7 +196,7 @@ class Base:
         return await parse_pagination(stmt)
 
     @classmethod
-    async def get_table_columns(cls, exclude: set = None) -> ClauseList:
+    def get_table_columns(cls, exclude: set = None) -> ClauseList:
         """
         获取模型所有字段
         exclude: 排除字段  {"name"}
@@ -184,18 +233,7 @@ class Base:
         data = result.first() if first else result.fetchall()
         return unwrap_scalars(data) if data else None
 
-    @classmethod
-    async def handle_params(cls, params: typing.Any) -> typing.Any:
-        """
-        :param params: 参数列表
-        :return: 过滤好的参数
-        """
-        if isinstance(params, dict):
-            params = cls.filter_params(params)
-            params = await cls.update_params(params)
-        elif isinstance(params, list):
-            params = [await cls.handle_params(p) for p in params]
-        return params
+
 
     @classmethod
     async def filter_params(cls, params: dict) -> dict:
@@ -221,7 +259,7 @@ class Base:
         return params
 
 
-
+@provide_async_session
 async def parse_pagination(
     query: select,
     page: int = None,

@@ -7,7 +7,7 @@
 
 import typing
 
-from sqlalchemy import String, Text, JSON, Integer, select
+from sqlalchemy import String, Text, JSON, Integer, select, and_
 from sqlalchemy.orm import mapped_column, aliased
 
 from autotest.models.base import Base
@@ -47,37 +47,38 @@ class User(Base):
             q.append(cls.id.in_(params.user_ids))
 
         u = aliased(User)
-        stmt = select(*cls.get_table_columns(), u.nickname.label("created_by_name")).where(*q).outerjoin(
-            u, u.id == cls.created_by).oder_by(cls.id.desc())
+        stmt = select(*cls.get_table_columns(), u.nickname.label("created_by_name")). \
+            where(*q). \
+            outerjoin(u, u.id == cls.created_by) \
+            .oder_by(cls.id.desc())
         return await cls.pagination(stmt)
 
     @classmethod
-    async def get_user_by_roles(cls, roles_id:int) -> typing.Any:
+    async def get_user_by_roles(cls, roles_id: int) -> typing.Any:
         """
         获取用户权限
         :param roles_id:
         :return:
         """
-        pass
+        stmt = select(cls.id).where(cls.roles.like(f"{roles_id}%"), cls.enabled_flag == 1)
+        return await cls.get_result(stmt, True)
 
     @classmethod
-    async def get_user_by_name(cls, username:str):
+    async def get_user_by_name(cls, username: str):
         """
         获取用户名字
         :param username:
         :return:
         """
-        pass
+        stmt = select(*cls.get_table_columns()).where(cls.username == username, cls.enabled_flag == 1)
+        return await cls.get_result(stmt, True)
 
     @classmethod
-    async def get_user_by_nickname(cls, nickname:str):
+    async def get_user_by_nickname(cls, nickname: str):
         """
         获取用户昵称
         :param nickname:
         :return:
         """
-        pass
-
-
-
-
+        stmt = select(*cls.get_table_columns()).where(cls.nickname == nickname, cls.enabled_flag == 1)
+        return await cls.get_result(stmt, True)

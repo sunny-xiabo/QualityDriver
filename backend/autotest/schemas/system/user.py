@@ -54,6 +54,7 @@ class UserQuery(BaseModel):
     class Config:
         orm_mode = True  # 是否使用orm模型
 
+
 class UserLogin(BaseModel):
     username: str = Field(..., description='用户名')
     password: str = Field(..., description='密码')

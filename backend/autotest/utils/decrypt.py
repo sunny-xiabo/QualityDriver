@@ -60,7 +60,8 @@ def encrypt_rsa_password(password):
         text = base64.b64encode(cipher.encrypt(password.encode())) #密码器和公钥对密码进行加密。使用 base64 编码将加密后的密码转换为字符串
         return text.decode()
     except Exception as e:
-        return password, e
+        print(e)
+        return password
 
 
 def decrypt_rsa_password(password):
@@ -76,7 +77,8 @@ def decrypt_rsa_password(password):
         return text.decode()
 
     except Exception as e:
-        return password, e
+        print(e)
+        return password
 
 
 if __name__ == '__main__':
