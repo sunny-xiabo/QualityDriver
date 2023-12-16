@@ -9,6 +9,8 @@ import uvicorn
 from fastapi import FastAPI
 from config import config
 from autotest.init.routers import init_router
+from autotest.init.redis_init import init_async_redis_pool
+from autotest.init.middleware import init_middleware
 
 # 创建FastAPI应用
 app = FastAPI(title="Quality Driver", version=config.PROJECT_VERSION)
@@ -20,6 +22,8 @@ async def init_app():
     :return:
     """
     init_router(app)
+    init_middleware(app)
+    await init_async_redis_pool(app)
 
 
 @app.on_event("startup")
