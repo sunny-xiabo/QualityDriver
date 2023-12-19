@@ -38,6 +38,7 @@ class Configs(BaseSettings):
 
     API_PREFIX: str = "/api"  # 接口前缀
     GLOBAL_ENCODING: str = "utf-8"  # 全局编码
+    WHITE_ROUTER: list = ["/api/user/login"]  # 白名单
 
     # 数据库配置
     DATABASE_URI: str = Field(..., env="MYSQL_DATABASE_URI")

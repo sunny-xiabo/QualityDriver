@@ -4,6 +4,7 @@
 # @File: user.py
 # @Date: 2023/12/12 11:20
 """
+import traceback
 import uuid
 from datetime import datetime
 from loguru import logger
@@ -55,3 +56,19 @@ class UserService:
         await g.redis.set(TEST_USER_INFO.format(token), token_user_info.dict(), CACHE_DAY)
         logger.info('用户 [{}] 登录了系统'.format(user_info["username"]))
 
+    @staticmethod
+    async def logout():
+        """
+        退出
+        :return:
+        """
+        token = g.request.headers.get("token")
+        try:
+            # 从Redis中删除与该token关联的用户信息
+            await g.redis.delete(TEST_USER_INFO.format(token))
+            return "退出成功"
+        except Exception as e:
+            # 记录错误信息并返回错误原因
+            error_message = traceback.format_exc()
+            logger.error(error_message)
+            return "退出失败: {}".format(error_message)

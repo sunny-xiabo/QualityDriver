@@ -21,3 +21,12 @@ async def login(params: UserLogin):
     """
     data = await UserService.login(params)
     return partner_success(data, msg="登录成功")
+
+@router.post("/logout", description="退出")
+async def logout():
+    """
+    退出
+    :return:
+    """
+    await UserService.logout()
+    return partner_success()

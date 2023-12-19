@@ -6,7 +6,7 @@
 """
 import click
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from loguru import logger
 
 from autotest.init.logger_init import init_logger
@@ -14,9 +14,10 @@ from config import config
 from autotest.init.routers import init_router
 from autotest.init.redis_init import init_async_redis_pool
 from autotest.init.middleware import init_middleware
+from autotest.init.dependenices import login_verification
 
 # 创建FastAPI应用
-app = FastAPI(title="Quality Driver", version=config.PROJECT_VERSION)
+app = FastAPI(title="Quality Driver", version=config.PROJECT_VERSION,dependencies=[Depends(login_verification)])
 
 
 async def init_app():
@@ -25,8 +26,11 @@ async def init_app():
     :return:
     """
     init_router(app)  # 注册路由
+
     init_middleware(app)  # 注册中间件
+
     await init_async_redis_pool(app)  # 连接redis
+
     init_logger()  # 初始化日志
     logger.info("日志启动成功")
 
