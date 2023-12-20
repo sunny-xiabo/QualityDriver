@@ -28,7 +28,7 @@ class CodeEnum(Enum):
     WRONG_USER_NAME_OR_PASSWORD = (10001, "账号或者密码错误！😱")  # 账号或密码错误
     PARTNER_CODE_EMPLOYEE_FAIL = (10002, "账号错误！")  # 账号错误
     WRONG_USER_NAME_OR_PASSWORD_LOCK = (10003, "密码输入错误超过次数，请5分钟后再登录！😭")
-    USERNAME_OR_EMAIL_IS_REGISTER = (10004, "用户名已被注册")
+    USERNAME_OR_EMAIL_IS_REGISTERED = (10004, "用户名已被注册")
     USER_ID_IS_NULL = (10005, "用户id不能为空")
     PASSWORD_TWICE_IS_NOT_AGREEMENT = (10006, "两次输入的密码不一致")
     NEW_PWD_NO_OLD_PWD_EQUAL = (10007, "新密码不能与旧密码相同")

@@ -38,11 +38,22 @@ class Configs(BaseSettings):
 
     API_PREFIX: str = "/api"  # 接口前缀
     GLOBAL_ENCODING: str = "utf-8"  # 全局编码
-
+    WHITE_ROUTER: list = ["/api/user/login"]  # 白名单
 
     # 数据库配置
     DATABASE_URI: str = Field(..., env="MYSQL_DATABASE_URI")
     DATABASE_ECHO: bool = False  # 是否打印数据库日志 (可看到创建表、表数据增删改查的信息)
+
+    # redis
+    REDIS_URI: str = Field(..., env="REDIS_URI")
+
+    # logger配置
+    LOGGER_DIR: str = "logs"  # 日志文件夹名
+    LOGGER_NAME: str = "QualityDriver"  # 日志文件名
+    LOGGER_LEVEL: str = "INFO"  # 日志等级
+    LOGGER_ROTATION: str = "10 MB"  # 日志分割
+    LOGGER_RETENTION: str = "10 days"  # 日志保留
+
 
     class Config:
         case_sensitive = True  # 区分大小写
