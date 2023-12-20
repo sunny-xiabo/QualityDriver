@@ -25,18 +25,18 @@ def logger_file() -> str:
     """
     log_path = create_dir(config.LOGGER_DIR)
 
+    # 获取当前的日期和时间
+    now = datetime.now()
+    # 格式化日期和时间
+    date_str = now.strftime("%Y%m%d%H%M")
+    # 拼接文件名
+    filename = f"{config.LOGGER_NAME}_{date_str}.log"
+
     file_list = sorted(Path(log_path).iterdir(), key=os.path.getmtime)
     # 使用 os.path.getmtime 对文件列表进行排序，最旧的文件会在列表的第一个位置
 
     if len(file_list) > 3:  # 如果文件数量超过3个
         os.remove(file_list[0])
-
-    # 获取当前的日期和时间
-    now = datetime.now()
-    # 格式化日期和时间
-    timestamp = now.strftime("%Y%m%d%H%M%S")
-    # 拼接文件名
-    filename = f"{config.LOGGER_NAME}_{timestamp}"
 
     return os.path.join(log_path, filename)
 
@@ -57,6 +57,8 @@ logger.add(
     logger_file(),  # 输出到文件
     encoding=config.GLOBAL_ENCODING,  # 编码
     level=config.LOGGER_LEVEL,  # 日志级别
+    rotation=config.LOGGER_ROTATION,  # 保存策略
+    retention=config.LOGGER_RETENTION,  # 保存策略
     filter=correlation_id_filter,  # 过滤器
     format=fmt  # 格式
 )

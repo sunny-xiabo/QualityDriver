@@ -6,7 +6,7 @@
 """
 from fastapi import APIRouter
 
-from autotest.schemas.system.user import UserLogin
+from autotest.schemas.system.user import UserLogin, UserInfo
 from autotest.services.system.user import UserService
 from autotest.utils.response_http_response import partner_success
 
@@ -30,3 +30,12 @@ async def logout():
     """
     await UserService.logout()
     return partner_success()
+
+@router.post("/userRegister", description="用户注册")
+async def user_register(user_info: UserInfo):
+    """
+    用户注册
+    :return:
+    """
+    data = await UserService.user_register(user_info)
+    return partner_success(data, msg="注册成功")

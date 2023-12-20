@@ -49,7 +49,7 @@ class Configs(BaseSettings):
 
     # logger配置
     LOGGER_DIR: str = "logs"  # 日志文件夹名
-    LOGGER_NAME: str = "QualityDriver.log"  # 日志文件名
+    LOGGER_NAME: str = "QualityDriver"  # 日志文件名
     LOGGER_LEVEL: str = "INFO"  # 日志等级
     LOGGER_ROTATION: str = "10 MB"  # 日志分割
     LOGGER_RETENTION: str = "10 days"  # 日志保留

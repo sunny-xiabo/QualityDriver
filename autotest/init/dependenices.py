@@ -1,7 +1,7 @@
 """
 # -*- coding:utf-8 -*-
 # @Author: Beck
-# @File: dependenices.py
+# @File: dependencies.py
 # @Date: 2023/12/19 19:50
 """
 from fastapi.security import APIKeyHeader
@@ -30,12 +30,13 @@ class MyAPIKeyHeader(APIKeyHeader):
         token: str = request.headers.get("token")
         if not token:
             raise AccessTokenFail()
-        user_info = await g.redis.get(TEST_USER_INFO.format(token))
+        user_info_key= TEST_USER_INFO.format(token)
+        user_info = await g.redis.get(user_info_key)
         if not user_info:
             raise AccessTokenFail()
         # 重置token时间
-        await g.redis.set(TEST_USER_INFO.format(token), user_info, CACHE_DAY)
-        return
+        await g.redis.set(user_info_key, user_info, CACHE_DAY)
+        return user_info
 
 
 async def login_verification(token: Security = Security(MyAPIKeyHeader())):

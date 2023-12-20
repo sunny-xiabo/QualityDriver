@@ -10,7 +10,7 @@ from datetime import datetime
 from loguru import logger
 
 from autotest.models.system_models import User
-from autotest.schemas.system.user import UserLogin, UserTokenIn
+from autotest.schemas.system.user import UserLogin, UserTokenIn, UserInfo
 from autotest.utils.consts import CACHE_DAY, TEST_USER_INFO
 from autotest.utils.decrypt import decrypt_rsa_password
 from autotest.utils.local import g
@@ -72,3 +72,16 @@ class UserService:
             error_message = traceback.format_exc()
             logger.error(error_message)
             return "退出失败: {}".format(error_message)
+
+    @staticmethod
+    async def user_register(user_params: UserInfo) -> "User":
+        """
+        用户注册
+        :param user_params:
+        :return:
+        """
+        user_info = await User.get_user_by_name(user_params.username)
+        if user_info:
+            raise ValueError(CodeEnum.USERNAME_OR_EMAIL_IS_REGISTERED.msg)
+        user = await User.create(user_params.dict())
+        return user

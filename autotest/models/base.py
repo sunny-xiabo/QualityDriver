@@ -13,7 +13,7 @@ from sqlalchemy import BigInteger, DateTime, func, Boolean, String, select, Exec
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.sql.functions import current_user
+from autotest.utils.current_user import current_user
 
 from autotest.db.session import provide_async_session
 from autotest.exceptions.exceptions import AccessTokenFail
@@ -243,6 +243,7 @@ class Base:
     @classmethod
     async def update_params(cls, params: dict) -> dict:
         """更新参数，添加或更新 trace_id、updated_by 和 created_by"""
+        params = await params
         params['trace_id'] = g.trace_id
         try:
             current_user_info = await current_user()
