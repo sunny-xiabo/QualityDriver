@@ -22,6 +22,7 @@ async def login(params: UserLogin):
     data = await UserService.login(params)
     return partner_success(data, msg="登录成功")
 
+
 @router.post("/logout", description="退出")
 async def logout():
     """
@@ -31,6 +32,7 @@ async def logout():
     await UserService.logout()
     return partner_success()
 
+
 @router.post("/userRegister", description="用户注册")
 async def user_register(user_info: UserInfo):
     """
@@ -38,4 +40,4 @@ async def user_register(user_info: UserInfo):
     :return:
     """
     data = await UserService.user_register(user_info)
-    return partner_success(data, msg="注册成功")
+    return partner_success(msg="注册成功")
