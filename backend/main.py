@@ -32,6 +32,7 @@ async def init_app():
     await init_async_redis_pool(app)  # 连接redis
 
     init_logger()  # 初始化日志
+
     logger.info("日志启动成功")
 
 
@@ -41,6 +42,10 @@ async def startup():
     await init_app()
     # from autotest.models import init_db
     # await init_db()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await app.state.redis.close()
 
 
 if __name__ == "__main__":

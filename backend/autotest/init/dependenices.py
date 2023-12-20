@@ -36,7 +36,7 @@ class MyAPIKeyHeader(APIKeyHeader):
             raise AccessTokenFail()
         # 重置token时间
         await g.redis.set(user_info_key, user_info, CACHE_DAY)
-        return user_info
+        return
 
 
 async def login_verification(token: Security = Security(MyAPIKeyHeader())):
