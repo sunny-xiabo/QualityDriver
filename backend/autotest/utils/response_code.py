@@ -36,6 +36,7 @@ class CodeEnum(Enum):
 
     # 用户状态 验证  11000 - 12000
     PARTNER_CODE_TOKEN_EXPIRED_FAIL = (11000, "用户信息以已过期 😂")  # token已过期
+    PARTNER_CODE_TOKEN_IS_NONE = (11001, "用户信息不存在")
 
     # 参数类型 12000 - 13000
     PARTNER_CODE_PARAMS_FAIL = (12000, "必填参数不能为空 😅")  # 必填参数不能为空

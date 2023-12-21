@@ -4,9 +4,9 @@
 # @File: user.py
 # @Date: 2023/12/12 11:01
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
-from autotest.schemas.system.user import UserLogin, UserInfo
+from autotest.schemas.system.user import UserLogin, UserInfo, UserResetPwd
 from autotest.services.system.user import UserService
 from autotest.utils.response_http_response import partner_success
 
@@ -41,3 +41,34 @@ async def user_register(user_info: UserInfo):
     """
     data = await UserService.user_register(user_info)
     return partner_success(msg="注册成功")
+
+
+@router.post("/authorizeToken", description="校验token")
+async def authorize_token(request: Request):
+    """
+    校验token
+    :param request:
+    :return:
+    """
+    try:
+        token = request.headers.get("token", None)
+        user_info = await UserService.check_token(token)
+        return partner_success(user_info, msg="校验成功")
+    except ValueError as e:
+        code, msg = e.args
+        return partner_success(code=code, msg=msg)
+
+
+@router.post("/resetPassword", description="重置密码")
+async def reset_password(params: UserResetPwd):
+    """
+    重置密码
+    :param params:
+    :return:
+    """
+    try:
+        await UserService.reset_password(params)
+        return partner_success()
+    except ValueError as e:
+        code, msg = e.args
+        return partner_success(code=code, msg=msg)
