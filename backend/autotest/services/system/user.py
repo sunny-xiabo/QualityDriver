@@ -5,14 +5,15 @@
 # @Date: 2023/12/12 11:20
 """
 import traceback
+import typing
 import uuid
 from datetime import datetime
 from loguru import logger
 
 from autotest.models.system_models import User
-from autotest.schemas.system.user import UserLogin, UserTokenIn, UserInfo
+from autotest.schemas.system.user import UserLogin, UserTokenIn, UserInfo, UserResetPwd
 from autotest.utils.consts import CACHE_DAY, TEST_USER_INFO
-from autotest.utils.decrypt import decrypt_rsa_password
+from autotest.utils.decrypt import decrypt_rsa_password, encrypt_rsa_password
 from autotest.utils.local import g
 from autotest.utils.response_code import CodeEnum
 from autotest.utils.serialize import default_serialize
@@ -85,3 +86,48 @@ class UserService:
             raise ValueError(CodeEnum.USERNAME_OR_EMAIL_IS_REGISTERED.msg)
         user = await User.create(user_params.dict())
         return user
+
+    @staticmethod
+    async def check_token(token: str) -> typing.Dict[str, typing.Any]:
+        """
+        校验token
+        :param token: 用户的token，应该是一个字符串
+        :return: 一个字典，包含用户的 ID 和用户名。如果 token 无效或 None，将引发一个异常
+        """
+        if token is None:
+            raise ValueError(CodeEnum.PARTNER_CODE_TOKEN_IS_NONE.code, CodeEnum.PARTNER_CODE_TOKEN_IS_NONE.msg)
+
+        user_info = await g.redis.get(TEST_USER_INFO.format(token))
+        if not user_info:
+            raise ValueError(CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL.code,
+                             CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL.msg)
+
+        if not isinstance(user_info, dict):
+            raise TypeError(f"Unexpected type for user_info: {type(user_info).__name__}")
+
+        user_info = {
+            "id": user_info.get("id", None),
+            "username": user_info.get("username", None),
+        }
+        return user_info
+
+    @staticmethod
+    async def reset_password(params: UserResetPwd):
+        """
+        重置密码
+        :param params:
+        :return:
+        """
+        if params.new_pwd != params.re_new_pwd:
+            raise ValueError(CodeEnum.PASSWORD_TWICE_IS_NOT_AGREEMENT.code,
+                             CodeEnum.PASSWORD_TWICE_IS_NOT_AGREEMENT.msg)
+        user_info = await User.get(params.id)
+        pwd = decrypt_rsa_password(user_info.password)
+        if params.old_pwd != pwd:
+            raise ValueError(CodeEnum.OLD_PASSWORD_ERROR.code,
+                             CodeEnum.OLD_PASSWORD_ERROR.msg)
+        if params.new_pwd == pwd:
+            raise ValueError(CodeEnum.NEW_PWD_NO_OLD_PWD_EQUAL.code,
+                             CodeEnum.NEW_PWD_NO_OLD_PWD_EQUAL.msg)
+        new_pwd = encrypt_rsa_password(params.new_pwd)
+        await User.create_or_update({"id": params.id, "password": new_pwd})

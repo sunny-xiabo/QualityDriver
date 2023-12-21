@@ -30,5 +30,8 @@ class AccessTokenFail(MyBaseException):
     """
     访问令牌失败
     """
-    def __init__(self):
-        super(AccessTokenFail, self).__init__(CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL)
+
+    def __init__(self, code: str = CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL.code,
+                 msg: str = CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL.msg):
+        super(AccessTokenFail, self).__init__(code)
+        self.msg = msg
