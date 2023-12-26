@@ -6,7 +6,7 @@
 """
 from fastapi import APIRouter, Request
 
-from autotest.schemas.system.user import UserLogin, UserInfo, UserResetPwd
+from autotest.schemas.system.user import UserLogin, UserInfo, UserResetPwd, UserDel
 from autotest.services.system.user import UserService
 from autotest.utils.response_http_response import partner_success
 
@@ -19,8 +19,12 @@ async def login(params: UserLogin):
     登录
     :return:
     """
-    data = await UserService.login(params)
-    return partner_success(data, msg="登录成功")
+    try:
+        data = await UserService.login(params)
+        return partner_success(data, msg="登录成功")
+    except ValueError as e:
+        code, msg = e.args
+        return partner_success(code=code, msg=msg)
 
 
 @router.post("/logout", description="退出")
@@ -39,8 +43,12 @@ async def user_register(user_info: UserInfo):
     用户注册
     :return:
     """
-    data = await UserService.user_register(user_info)
-    return partner_success(msg="注册成功")
+    try:
+        data = await UserService.user_register(user_info)
+        return partner_success(data, msg="注册成功")
+    except ValueError as e:
+        code, msg = e.args
+        return partner_success(code=code, msg=msg)
 
 
 @router.post("/authorizeToken", description="校验token")
@@ -72,3 +80,14 @@ async def reset_password(params: UserResetPwd):
     except ValueError as e:
         code, msg = e.args
         return partner_success(code=code, msg=msg)
+
+
+@router.post("/deletedUser", description="删除用户")
+async def deleted_user(params: UserDel):
+    """
+    删除用户
+    :param params:
+    :return:
+    """
+    data = await UserService.deleted_user(params)
+    return partner_success(data, msg="删除成功")

@@ -11,7 +11,7 @@ from datetime import datetime
 from loguru import logger
 
 from autotest.models.system_models import User
-from autotest.schemas.system.user import UserLogin, UserTokenIn, UserInfo, UserResetPwd
+from autotest.schemas.system.user import UserLogin, UserTokenIn, UserInfo, UserResetPwd, UserDel
 from autotest.utils.consts import CACHE_DAY, TEST_USER_INFO
 from autotest.utils.decrypt import decrypt_rsa_password, encrypt_rsa_password
 from autotest.utils.local import g
@@ -34,13 +34,16 @@ class UserService:
         username = params.username
         password = params.password
         if not username or not password:
-            raise ValueError(CodeEnum.PARTNER_CODE_PARAMS_FAIL.msg)
+            raise ValueError(CodeEnum.PARTNER_CODE_PARAMS_FAIL.code,
+                             CodeEnum.PARTNER_CODE_PARAMS_FAIL.msg)
         user_info = await User.get_user_by_name(username)
         if not user_info:
-            raise ValueError(CodeEnum.WRONG_USER_NAME_OR_PASSWORD.msg)
+            raise ValueError(CodeEnum.WRONG_USER_NAME_OR_PASSWORD.code,
+                             CodeEnum.WRONG_USER_NAME_OR_PASSWORD.msg)
         u_password = decrypt_rsa_password(user_info['password'])
         if u_password != password:
-            raise ValueError(CodeEnum.WRONG_USER_NAME_OR_PASSWORD.msg)
+            raise ValueError(CodeEnum.WRONG_USER_NAME_OR_PASSWORD.code,
+                             CodeEnum.WRONG_USER_NAME_OR_PASSWORD.msg)
         token = str(uuid.uuid4())
         login_time = default_serialize(datetime.now())
         token_user_info = UserTokenIn(
@@ -83,7 +86,8 @@ class UserService:
         """
         user_info = await User.get_user_by_name(user_params.username)
         if user_info:
-            raise ValueError(CodeEnum.USERNAME_OR_EMAIL_IS_REGISTERED.msg)
+            raise ValueError(CodeEnum.USERNAME_OR_EMAIL_IS_REGISTERED.code,
+                             CodeEnum.USERNAME_OR_EMAIL_IS_REGISTERED.msg)
         user = await User.create(user_params.dict())
         return user
 
@@ -131,3 +135,16 @@ class UserService:
                              CodeEnum.NEW_PWD_NO_OLD_PWD_EQUAL.msg)
         new_pwd = encrypt_rsa_password(params.new_pwd)
         await User.create_or_update({"id": params.id, "password": new_pwd})
+
+    @staticmethod
+    async def deleted_user(params: UserDel):
+        """
+        删除用户
+        :param params: ID
+        :return:
+        """
+        try:
+            return await User.delete(params.id)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+
