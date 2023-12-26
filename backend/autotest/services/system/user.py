@@ -143,8 +143,41 @@ class UserService:
         :param params: ID
         :return:
         """
+        user = await User.get(params.id, include_deleted=True)
+        if not user:
+            raise ValueError(CodeEnum.USER_IS_NOT_EXIST.code,
+                             CodeEnum.USER_IS_NOT_EXIST.msg)
+        elif user.enabled_flag == 0:
+            raise ValueError(CodeEnum.USER_IS_DISABLE.code,
+                             CodeEnum.USER_IS_DISABLE.msg)
         try:
             return await User.delete(params.id)
         except Exception as e:
             logger.error(traceback.format_exc())
 
+    @staticmethod
+    async def get_user_info_by_token(token: str) -> UserTokenIn:
+        """
+        根据token获取用户信息
+        :param token:
+        :return:
+        """
+        token_user_info = await g.redis.get(TEST_USER_INFO.format(token))
+        if not token_user_info:
+            raise ValueError(CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL.code,
+                             CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL.msg)
+        user_info = await User.get(token_user_info.get("id"))
+        if not user_info:
+            raise ValueError(CodeEnum.PARTNER_CODE_TOKEN_IS_NONE.code,
+                             CodeEnum.PARTNER_CODE_TOKEN_IS_NONE.msg)
+        return UserTokenIn(
+            id=user_info.id,
+            token=token,
+            avatar=user_info.avatar,
+            username=user_info.username,
+            nickname=user_info.nickname,
+            roles=user_info.roles,
+            tags=user_info.tags,
+            login_time=token_user_info.get("login_time"),
+            remarks=user_info.remarks
+        )

@@ -89,5 +89,25 @@ async def deleted_user(params: UserDel):
     :param params:
     :return:
     """
-    data = await UserService.deleted_user(params)
-    return partner_success(data, msg="删除成功")
+    try:
+        data = await UserService.deleted_user(params)
+        return partner_success(data, msg="删除成功")
+    except ValueError as e:
+        code, msg = e.args
+        return partner_success(code=code, msg=msg)
+
+
+@router.post("/getUserInfoByToken", description="通过token获取用户信息")
+async def get_user_info_by_token(request: Request):
+    """
+    通过token获取用户信息
+    :param request:
+    :return:
+    """
+    try:
+        token = request.headers.get("token", None)
+        user_info = await UserService.get_user_info_by_token(token)
+        return partner_success(user_info)
+    except ValueError as e:
+        code, msg = e.args
+        return partner_success(code=code, msg=msg)

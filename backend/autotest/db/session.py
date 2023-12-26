@@ -118,7 +118,7 @@ def provide_async_session_router(func: typing.Callable):
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
         async with async_session() as session:
-            g.zero_db_session = session
+            g.qd_db_session = session
             try:
                 result = await func(*args, **kwargs)
                 await session.commit()
