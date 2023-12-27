@@ -1,24 +1,20 @@
-# frontend
+# umi project
 
-## Project setup
-```
-npm install
-```
+## Getting Started
 
-### Compiles and hot-reloads for development
-```
-npm run serve
+# node version
+```bash
+$ node v14.17.0
 ```
 
-### Compiles and minifies for production
-```
-npm run build
+Install dependencies,
+
+```bash
+$ yarn
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+Start the dev server,
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+```bash
+$ yarn start
+```
