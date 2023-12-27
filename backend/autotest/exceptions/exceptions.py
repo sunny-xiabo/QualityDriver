@@ -35,3 +35,45 @@ class AccessTokenFail(MyBaseException):
                  msg: str = CodeEnum.PARTNER_CODE_TOKEN_EXPIRED_FAIL.msg):
         super(AccessTokenFail, self).__init__(code)
         self.msg = msg
+
+class SetRedis(MyBaseException):
+    """
+    设置redis失败
+    """
+    def __init__(self):
+        super(SetRedis, self).__init__("Redis存储失败")
+
+class UserNotExist(MyBaseException):
+    """
+    用户不存在
+    """
+    def __init__(self):
+        super(UserNotExist, self).__init__("用户不存在")
+
+class ErrorUser(MyBaseException):
+    """
+    错误的用户或密码
+    """
+    def __init__(self):
+        super(ErrorUser, self).__init__("错误的用户名或密码")
+
+class PermissionNotEnough(MyBaseException):
+    """
+    权限不足
+    """
+    def __init__(self):
+        super(PermissionNotEnough, self).__init__("权限不足,拒绝访问")
+
+class ParameterError(MyBaseException):
+    """
+    参数错误
+    """
+    def __init__(self, err_code: typing.Union[CodeEnum, str]):
+        super(ParameterError, self).__init__(err_code)
+
+class EnvConfigInitError(MyBaseException):
+    """
+    环境配置初始化错误
+    """
+    def __init__(self, err_code: typing.Union[CodeEnum, str]):
+        super(EnvConfigInitError, self).__init__(err_code)
