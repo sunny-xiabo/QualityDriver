@@ -44,16 +44,21 @@ class Base:
     trace_id = mapped_column(String(255), comment="trace_id")
 
     @classmethod
-    async def get(cls, id: typing.Union[int, str], to_dict: object = False) -> typing.Union["Base", typing.Dict, None]:
+    async def get(cls, id: typing.Union[int, str], to_dict: object = False, include_deleted: bool = False) -> \
+    typing.Union["Base", typing.Dict, None]:
         """
-        封装获取
+        封装查询
         :param id: 查询id
         :param to_dict: 转换为字典
+        :param include_deleted: 是否包含已删除的记录
         :return: 模型对象
         """
         if not id:
             return None
-        sql = select(cls).where(cls.id == id, cls.enabled_flag == 1)
+        if include_deleted:
+            sql = select(cls).where(cls.id == id)
+        else:
+            sql = select(cls).where(cls.id == id, cls.enabled_flag == 1)  # enabled_flag是软删除字段，默认为1
         result = await cls.execute(sql)
         data = result.scalars().first()
         return data if not to_dict else unwrap_scalars(data)
@@ -157,7 +162,7 @@ class Base:
         :param params: params参数
         :return:
         """
-        session = g.zero_db_session
+        session = g.qd_db_session
         if session:
             return await session.execute(stmt, params)
         return await cls.execute_by_session(stmt, params)
@@ -232,8 +237,6 @@ class Base:
         result = await cls.execute(stmt)
         data = result.first() if first else result.fetchall()
         return unwrap_scalars(data) if data else None
-
-
 
     @classmethod
     async def filter_params(cls, params: dict) -> dict:

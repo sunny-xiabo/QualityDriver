@@ -33,6 +33,8 @@ class CodeEnum(Enum):
     PASSWORD_TWICE_IS_NOT_AGREEMENT = (10006, "两次输入的密码不一致")
     NEW_PWD_NO_OLD_PWD_EQUAL = (10007, "新密码不能与旧密码相同")
     OLD_PASSWORD_ERROR = (10008, "旧密码错误")
+    USER_IS_NOT_EXIST = (10009, "用户不存在,无法删除")
+    USER_IS_DISABLE = (10010, "用户已被删除")
 
     # 用户状态 验证  11000 - 12000
     PARTNER_CODE_TOKEN_EXPIRED_FAIL = (11000, "用户信息以已过期 😂")  # token已过期

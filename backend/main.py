@@ -9,6 +9,8 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from loguru import logger
 
+from autotest.init.cors import init_cors
+from autotest.init.exception import init_exception
 from autotest.init.logger_init import init_logger
 from config import config
 from autotest.init.routers import init_router
@@ -25,9 +27,13 @@ async def init_app():
     注册中心
     :return:
     """
+    init_exception(app)  # 注册全局异常
+
     init_router(app)  # 注册路由
 
     init_middleware(app)  # 注册中间件
+
+    init_cors(app)  # 注册初始化跨域
 
     await init_async_redis_pool(app)  # 连接redis
 
