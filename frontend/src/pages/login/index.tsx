@@ -7,12 +7,16 @@ import { FormattedMessage } from 'react-intl';
 import styles from './index.less';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
-export default function IndexPage() {
-  const [type, setType] = useState('account');
+const submitButtonTextMap: Record<string, string> = {
+  account: '登录',
+  register: '注册',
+};
 
+export default function IndexPage() {
+  const [type, setType] = useState<string>('account');
 
   const onSubmit = useCallback((values) => {
-   return login(values).then((res) => {
+    return login(values).then((res) => {
       if (res.success) {
         console.log('go home');
       } else {
@@ -28,6 +32,9 @@ export default function IndexPage() {
         isKeyPressSubmit
         submitter={{
           render: (_, dom) => dom.pop(),
+          searchConfig: {
+            submitText: submitButtonTextMap[type],
+          },
           submitButtonProps: {
             size: 'large',
             style: {
@@ -35,12 +42,13 @@ export default function IndexPage() {
               borderRadius: '32px',
             },
           },
-        }} 
+        }}
       >
-        <Tabs>
+        <Tabs accessKey={type} onChange={setType}>
           <Tabs.TabPane key="account" tab="账号密码登录" />
           <Tabs.TabPane key="register" tab="注册" />
         </Tabs>
+
         {type === 'account' && (
           <>
             <ProFormText
@@ -53,10 +61,10 @@ export default function IndexPage() {
               rules={[
                 {
                   required: true,
-                  message: <FormattedMessage defaultMessage="请输入用户名" />,
+                  message: <FormattedMessage defaultMessage="请输入用户名!" />,
                 },
               ]}
-              placeholder='请输入用户名'
+              placeholder="请输入用户名"
             />
 
             <ProFormText.Password
@@ -72,9 +80,15 @@ export default function IndexPage() {
                   message: <FormattedMessage defaultMessage="请输入密码!" />,
                 },
               ]}
+              placeholder="请输入密码"
             />
           </>
         )}
+        <div
+          style={{
+            marginBottom: 24,
+          }}
+        ></div>
       </ProForm>
     </div>
   );
