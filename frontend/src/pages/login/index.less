@@ -15,21 +15,35 @@
     backdrop-filter: blur(2px); // 应用模糊效果
   }
 
-  .forget_pwd_wrap{
+  .forget_pwd_wrap {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 24px;
   }
 
-  .proform_generic_warp{
-    font-size:large;
+  .proform_generic_warp {
+    font-size: large;
     border-radius: 24px;
+
+    input::placeholder {
+      font-size: 14px;
     }
+
+    // 兼容不同浏览器的 placeholder 样式
+    input::-webkit-input-placeholder {
+      font-size: 14px;
+    }
+    input::-moz-placeholder{
+      font-size: 14px;
+    }
+    input::-ms-input-placeholder{
+      font-size: 14px;
+    }
+
+  }
 }
 
-
 .global {
-
   .@{ant-prefix}-tabs-nav-list {
     margin: auto;
     font-size: 16px;
