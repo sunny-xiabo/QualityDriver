@@ -1,15 +1,35 @@
 @import '~antd/es/style/themes/default.less';
 
 .main {
-  width: 328px;
+  height: 100vh;
   margin: 0 auto;
-  @media screen and (max-width: @screen-sm) {
-    width: 95%;
-    max-width: 328px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .form_wrap {
+    width: 328px;
+    padding: 20px;
+    box-sizing: content-box;
+    background-color: rgba(255, 255, 255, 0.1); // 半透明的白色背景
+    backdrop-filter: blur(2px); // 应用模糊效果
   }
+
+  .forget_pwd_wrap{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+
+  .proform_generic_warp{
+    font-size:large;
+    border-radius: 24px;
+    }
 }
 
+
 .global {
+
   .@{ant-prefix}-tabs-nav-list {
     margin: auto;
     font-size: 16px;
@@ -28,7 +48,6 @@
     color: @primary-color;
   }
 }
-
 
 .prefixIcon {
   color: @primary-color;
