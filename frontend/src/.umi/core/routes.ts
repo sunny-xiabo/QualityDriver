@@ -12,6 +12,12 @@ export function getRoutes() {
     "component": require('/Users/xiabo/SoftwareTest/CarbonPy/QualityDriver/frontend/src/pages/login').default
   },
   {
+    "exact": true,
+    "path": "/home",
+    "compenent": "./home"
+  },
+  {
+    "path": "/*",
     "redirect": "/",
     "exact": true
   }

@@ -3,27 +3,31 @@ import { message, Tabs } from 'antd';
 import { login } from '@/services/login/api';
 import ProForm, { ProFormText } from '@ant-design/pro-form';
 
-
-import styles from './index.less';
-import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import styles from './style.less';
+import { LockOutlined,  UserOutlined } from '@ant-design/icons';
 import bgImage from '@/assets/backgroud-login.jpeg';
+import {useHistory} from 'react-router-dom';
+
 
 const submitButtonTextMap: Record<string, string> = {
   account: '登录',
 };
 
-export default function IndexPage() {
+export default function LoginPage() {
+  const history = useHistory();
   const [type, setType] = useState<string>('account');
 
   const onSubmit = useCallback((values) => {
     return login(values).then((res) => {
       if (res.success) {
-        console.log('go home');
+        history.push('/home'); // 跳转到主页 
       } else {
         message.error(res.msg);
       }
     });
-  }, []);
+  }, [history]);
+
+
 
   return (
     <div
@@ -102,4 +106,4 @@ export default function IndexPage() {
       </div>
     </div>
   );
-}
+};
