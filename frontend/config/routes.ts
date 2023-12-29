@@ -2,7 +2,7 @@
 
 export default [
   { exact: true, path: '/', component: './login' },
-  { exact: true, path: '/home', compenent: './home' },
+  { exact: true, path: '/home', component: './home' },
   {
     path: '*',
     redirect: '/',

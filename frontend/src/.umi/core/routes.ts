@@ -14,7 +14,7 @@ export function getRoutes() {
   {
     "exact": true,
     "path": "/home",
-    "compenent": "./home"
+    "component": require('/Users/xiabo/SoftwareTest/CarbonPy/QualityDriver/frontend/src/pages/home').default
   },
   {
     "path": "/*",
