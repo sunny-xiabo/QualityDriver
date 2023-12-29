@@ -89,7 +89,6 @@ export default function IndexPage() {
               />
             </>
           )}
-
           <div className={styles.forget_pwd_wrap}>
             <a
               onClick={() => {
