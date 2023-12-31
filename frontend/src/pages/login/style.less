@@ -1,0 +1,69 @@
+@import '~antd/es/style/themes/default.less';
+
+.main {
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .form_wrap {
+    width: 328px;
+    padding: 20px;
+    box-sizing: content-box;
+    background-color: rgba(255, 255, 255, 0.1); // 半透明的白色背景
+    backdrop-filter: blur(2px); // 应用模糊效果
+  }
+
+  .forget_pwd_wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+
+  .proform_generic_warp {
+    font-size: large;
+    border-radius: 24px;
+
+    input::placeholder {
+      font-size: 14px;
+    }
+
+    // 兼容不同浏览器的 placeholder 样式
+    input::-webkit-input-placeholder {
+      font-size: 14px;
+    }
+    input::-moz-placeholder{
+      font-size: 14px;
+    }
+    input::-ms-input-placeholder{
+      font-size: 14px;
+    }
+
+  }
+}
+
+.global {
+  .@{ant-prefix}-tabs-nav-list {
+    margin: auto;
+    font-size: 16px;
+  }
+}
+
+.icon {
+  margin-left: 16px;
+  color: rgba(0, 0, 0, 0.2);
+  font-size: 24px;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: @primary-color;
+  }
+}
+
+.prefixIcon {
+  color: @primary-color;
+  font-size: @font-size-base;
+}
