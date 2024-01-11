@@ -35,6 +35,11 @@ class CodeEnum(Enum):
     OLD_PASSWORD_ERROR = (10008, "旧密码错误")
     USER_IS_NOT_EXIST = (10009, "用户不存在,无法删除")
     USER_IS_DISABLE = (10010, "用户已被删除")
+    ROLE_NAME_IS_EXIST = (10011, "角色名称已存在")
+    ROLE_ASSOCIATED_USER = (10012, "角色已关联用户,无法删除")
+    ROLE_ID_IS_NOT_EXIST = (10013, "角色id不存在")
+    ROLE_IS_DISABLE = (10014, "角色已被删除")
+
 
     # 用户状态 验证  11000 - 12000
     PARTNER_CODE_TOKEN_EXPIRED_FAIL = (11000, "用户信息以已过期 😂")  # token已过期

@@ -7,7 +7,7 @@
 
 from fastapi import APIRouter
 
-from autotest.apis.system import user
+from autotest.apis.system import user, role
 
 app_router = APIRouter()
 
@@ -15,5 +15,6 @@ app_router = APIRouter()
 
 # system
 app_router.include_router(user.router, prefix="/user", tags=['user'])
+app_router.include_router(role.router, prefix="/roles", tags=['roles'])
 
 #dd
