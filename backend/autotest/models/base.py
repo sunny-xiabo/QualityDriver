@@ -9,7 +9,7 @@ import typing
 from math import ceil
 
 from sqlalchemy import BigInteger, DateTime, func, Boolean, String, select, Executable, Result, ClauseList, Select, \
-    insert, update, delete
+    insert, update, delete, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import mapped_column
@@ -58,7 +58,7 @@ class Base:
         if include_deleted:
             sql = select(cls).where(cls.id == id)
         else:
-            sql = select(cls).where(cls.id == id, cls.enabled_flag == 1)  # enabled_flag是软删除字段，默认为1
+            sql = select(cls).where(and_(cls.id == id, cls.enabled_flag == 1))  # enabled_flag是软删除字段，默认为1
         result = await cls.execute(sql)
         data = result.scalars().first()
         return data if not to_dict else unwrap_scalars(data)
@@ -292,7 +292,7 @@ async def parse_pagination(
     if g.request.method == 'POST':
         request_json = await g.request.json()
         page = int(request_json.get('page', DEFAULT_PAGE)) if not page else page
-        page_size = min(int(request_json.get('pageSize', type=int, default=DEFAULT_PER_PAGE)),
+        page_size = min(int(request_json.get('pageSize', DEFAULT_PER_PAGE)),
                         1000) if not page_size else page_size
     else:
         page = g.request.args.get('page', type=int, default=DEFAULT_PAGE) if not page else page
