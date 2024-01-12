@@ -47,9 +47,9 @@ class RoleService:
                                  CodeEnum.ROLE_ID_IS_NOT_EXIST.msg)
             # 如果角色名已经改变，并且新的角色名已经存在，那么抛出一个错误
             if role_info.name != params.name:
-                if  await Roles.get_roles_by_name(params.name):
+                if await Roles.get_roles_by_name(params.name):
                     raise ValueError(CodeEnum.ROLE_NAME_IS_EXIST.code,
-                                 CodeEnum.ROLE_NAME_IS_EXIST.msg)
+                                     CodeEnum.ROLE_NAME_IS_EXIST.msg)
         # 如果角色ID不存在，直接检查新的角色名是否已经存在
         elif await Roles.get_roles_by_name(params.name):
             raise ValueError(CodeEnum.ROLE_NAME_IS_EXIST.code,

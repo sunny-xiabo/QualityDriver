@@ -19,7 +19,7 @@ from autotest.init.middleware import init_middleware
 from autotest.init.dependenices import login_verification
 
 # 创建FastAPI应用
-app = FastAPI(title="Quality Driver", version=config.PROJECT_VERSION,dependencies=[Depends(login_verification)])
+app = FastAPI(title="Quality Driver", version=config.PROJECT_VERSION, dependencies=[Depends(login_verification)])
 
 
 async def init_app():
@@ -46,8 +46,9 @@ async def init_app():
 async def startup():
     click.echo(config.PROJECT_LOGO)
     await init_app()
-    # from autotest.models import init_db
-    # await init_db()
+    from autotest.models import init_db
+    await init_db()
+
 
 @app.on_event("shutdown")
 async def shutdown():

@@ -50,7 +50,8 @@ class CodeEnum(Enum):
 
     # project 项目 13000 - 14000
     PROJECT_HAS_MODULE_ASSOCIATION = (13000, "项目有模块或用例关联，不能删除")
-    PROJECT_NAME_EXIST = (13001, "项目名已存在")  # 项目名以存在
+    PROJECT_NAME_EXIST = (13001, "项目名已存在")  # 项目名已存在
+    PROJECT_ID_IS_NOT_EXIST = (13002, "项目不存在")
 
     # module 模块 14000 - 15000
     MODULE_HAS_CASE_ASSOCIATION = (14000, " 模块有用例关联, 请删除对于模块下的用例")  # 模块有用例关联
