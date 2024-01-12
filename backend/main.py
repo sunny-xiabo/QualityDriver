@@ -46,8 +46,8 @@ async def init_app():
 async def startup():
     click.echo(config.PROJECT_LOGO)
     await init_app()
-    from autotest.models import init_db
-    await init_db()
+    # from autotest.models import init_db
+    # await init_db()
 
 
 @app.on_event("shutdown")
